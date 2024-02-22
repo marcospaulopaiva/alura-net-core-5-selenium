@@ -8,44 +8,88 @@ namespace Alura.ByteBank.WebApp.Testes
 {
     public class NavegandoNaPaginaHome
     {
+        private IWebDriver _driver;
+
+        public NavegandoNaPaginaHome()
+        {
+            _driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
+        }
+
         [Fact]
         public void CarregaPaginaHomeEVerificaTituloDaPagina()
         {
             //Arrange
-            IWebDriver driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             //Act
-            driver.Navigate().GoToUrl("https://localhost:44309");
+            _driver.Navigate().GoToUrl("https://localhost:44309");
+            
             //Assert
-            Assert.Contains("WebApp", driver.Title);
+            Assert.Contains("WebApp", _driver.Title);
         }
 
         [Fact]
         public void CarregaPaginaHomeVerificaExistenciaLinkLoginEHome()
         {
             //Arrange
-            IWebDriver driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
             //Act
-            driver.Navigate().GoToUrl("https://localhost:44309");
+            _driver.Navigate().GoToUrl("https://localhost:44309");
+            
             //Assert
-            Assert.Contains("Login", driver.PageSource);
-            Assert.Contains("Home", driver.PageSource);
+            Assert.Contains("Login", _driver.PageSource);
+            Assert.Contains("Home", _driver.PageSource);
         }
 
         [Fact]
         public void LogandoNoSistema()
         {
             //Arrange
-            IWebDriver driver = new ChromeDriver(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-            driver.Navigate().GoToUrl("https://localhost:44309/");
-            driver.Manage().Window.Size = new System.Drawing.Size(1294, 869);
-            driver.FindElement(By.LinkText("Login")).Click();
-            driver.FindElement(By.Id("Email")).SendKeys("andre@email.com");
-            driver.FindElement(By.Id("Senha")).SendKeys("senha01");
-            driver.FindElement(By.Id("btn-logar")).Click();
-            driver.FindElement(By.CssSelector(".btn")).Click();
-            driver.FindElement(By.Id("Email")).SendKeys("andre@email.com");
-            driver.FindElement(By.Id("Senha")).SendKeys("senha01");
+            //Act
+            _driver.Navigate().GoToUrl("https://localhost:44309/");
+            _driver.Manage().Window.Size = new System.Drawing.Size(1294, 869);
+            _driver.FindElement(By.LinkText("Login")).Click();
+            _driver.FindElement(By.Id("Email")).SendKeys("andre@email.com");
+            _driver.FindElement(By.Id("Senha")).SendKeys("senha01");
+            _driver.FindElement(By.Id("btn-logar")).Click();
+            _driver.FindElement(By.CssSelector(".btn")).Click();
+            _driver.FindElement(By.Id("Email")).SendKeys("andre@email.com");
+            _driver.FindElement(By.Id("Senha")).SendKeys("senha01");
         }
+
+        [Fact]
+        public void ValidaLinkDeLoginNaHome()
+        {
+            //Arrange
+            //Act
+            _driver.Navigate().GoToUrl("https://localhost:44309/");
+            var linkLogin = _driver.FindElement(By.LinkText("Login"));
+            linkLogin.Click();
+
+            //Assert
+            Assert.Contains("img", _driver.PageSource);
+        }
+
+        [Fact]
+        public void TentaAcessarPaginaSemEstarLogado()
+        {
+            //Arrange
+            //Act
+            _driver.Navigate().GoToUrl("https://localhost:44309/Agencia/Index");
+
+            //Assert
+            Assert.Contains("401", _driver.PageSource);
+        }
+
+        [Fact]
+        public void AcessarPaginaSemEstarLogadoVerificaURL()
+        {
+            //Arrange
+            //Act
+            _driver.Navigate().GoToUrl("https://localhost:44309/Agencia/Index");
+
+            //Assert
+            Assert.Contains("https://localhost:44309/Agencia/Index", _driver.Url);
+            Assert.Contains("401", _driver.PageSource);
+        }
+
 
     }
 }
